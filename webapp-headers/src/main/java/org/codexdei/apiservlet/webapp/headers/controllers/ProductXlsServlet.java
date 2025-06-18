@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet("/products.xls")
+@WebServlet({"/products.xls","/products.html"})
 public class ProductXlsServlet extends HttpServlet {
 
     ProductService productService = new ProductServiceImpl();
@@ -23,17 +23,27 @@ public class ProductXlsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         resp.setContentType("text/html;charset=UTF-8");
+        String servletPath = req.getServletPath();
+        boolean isXls = servletPath.endsWith(".xls");
+
+        if (isXls){
+            resp.setContentType("application/vnd.ms-excel");
+            resp.setHeader("Content-Disposition","attachment;filename=products.xls");
+        }
 
         try (PrintWriter out = resp.getWriter()) {
 
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<meta charset=\"UTF-8\">");
-            out.println("       <title>Products List</title>");
-            out.println("   </head>");
-            out.println("   <body>");
-            out.println("       <h1>Products List!</h1>");
+          if(!isXls) {
+              out.println("<!DOCTYPE html>");
+              out.println("<html>");
+              out.println("<head>");
+              out.println("<meta charset=\"UTF-8\">");
+              out.println("       <title>Products List</title>");
+              out.println("   </head>");
+              out.println("   <body>");
+              out.println("       <h1>Products List!</h1>");
+              out.println("       <p><a href=\"" + req.getContextPath() + "/products.xls" + "\">Export to</a></p>");
+          }
             out.println("           <table>");
             out.println("               <tr>");
             out.println("                    <th>Id</th>");
@@ -50,8 +60,10 @@ public class ProductXlsServlet extends HttpServlet {
             out.println("                   </tr>");
             });
             out.println("           </table>");
-            out.println("   </body>");
-            out.println("</html>");
+          if(!isXls){
+              out.println("   </body>");
+              out.println("</html>");
+          }
         }
     }
 }
