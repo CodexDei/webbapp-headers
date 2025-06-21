@@ -16,6 +16,5 @@ public class DispatcherServlet extends HttpServlet {
     //No crea un nuevo request, sino que usa el mismo request y los une, es la diferencia con Location
     //Es decir que no cambia la ruta url, mantiene la misma: ".../dispatcher"
         getServletContext().getRequestDispatcher("/products.html").forward(req,resp);
-
     }
 }
